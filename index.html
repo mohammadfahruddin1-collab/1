@@ -1,290 +1,170 @@
-
 <!doctype html>
 <html lang="id">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Video Wall — Hanya Video Saya</title>
+  <title>Situs Nonton MP4 - Demo</title>
   <style>
-    :root{--bg:#0b1020;--card:#0f1724;--muted:#9aa4b2;--accent:#3b82f6}
+    :root{ --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#06b6d4; }
     *{box-sizing:border-box}
-    body{font-family:Inter, system-ui, Arial, sans-serif;background:linear-gradient(180deg,#071024 0%, #0b1530 100%);color:#e6eef8;margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-    .wrap{width:100%;max-width:980px}
-    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    body{font-family:Inter, system-ui, Arial, sans-serif; margin:0; min-height:100vh; background:linear-gradient(180deg,#061025 0%, #07122a 100%); color:#e6f0f6}
+    header{padding:20px; display:flex;align-items:center;gap:16px}
     h1{font-size:20px;margin:0}
-    p.lead{margin:0;color:var(--muted);font-size:13px}
-    .player-card{background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-    video{width:100%;height:480px;background:#000;border-radius:8px;display:block}
-    .controls{display:flex;gap:12px;align-items:center;margin-top:12px}
-    .btn{background:var(--accent);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
-    .input, .select{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:inherit;width:100%}
-    .grid{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-top:16px}
-    .panel{background:var(--card);padding:12px;border-radius:10px}
-    .list{max-height:260px;overflow:auto;margin-top:8px}
-    .item{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;margin-bottom:8px;background:linear-gradient(90deg, rgba(255,255,255,0.01), transparent)}
-    .thumb{width:84px;height:48px;background:#000;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
-    small{color:var(--muted)}
-    .row{display:flex;gap:8px;align-items:center}
-    .danger{background:#ff4d4f}
-    footer{margin-top:10px;color:var(--muted);font-size:13px}
-    @media(max-width:880px){.grid{grid-template-columns:1fr;}.player-card video{height:260px}}
+    .container{max-width:1100px;margin:20px auto;padding:16px}
+    .controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+    .input, button{padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:inherit}
+    .input{min-width:260px}
+    button.primary{background:linear-gradient(90deg,var(--accent),#3b82f6);border:0;color:#031022}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    .thumb{width:100%;height:150px;background:#031022;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);overflow:hidden}
+    video{width:100%;height:100%;object-fit:cover}
+    .meta{margin-top:8px;display:flex;justify-content:space-between;align-items:center}
+    .title{font-weight:600;font-size:14px}
+    .muted{color:var(--muted);font-size:13px}
+    .fullplayer{position:fixed;inset:0;background:rgba(2,6,23,0.85);display:flex;align-items:center;justify-content:center;padding:20px}
+    .player-box{width:100%;max-width:1000px;background:#071226;padding:12px;border-radius:12px}
+    .close{background:transparent;border:0;color:#fff;font-size:18px}
+    .note{color:var(--muted);font-size:13px;margin-top:8px}
+    footer{padding:20px;text-align:center;color:var(--muted)}
+    @media (max-width:540px){.thumb{height:120px}}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>ANF CINEMA</h1>
-        <p class="lead">Situs sederhana untuk menonton video seru bagi anak-anak ANF saja.</p>
-      </div>
-    </header>
+  <header>
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#071226"/><path d="M5 6h14v12H5z" fill="#06b6d4" opacity="0.12"/><path d="M7 8h10v2H7z" fill="#06b6d4"/></svg>
+    <div>
+      <h1>Situs Nonton MP4 — Demo</h1>
+      <div class="note">Tambahkan URL .mp4 atau pilih file lokal (hanya untuk pemutaran di browser saat ini).</div>
+    </div>
+  </header>
 
-    <div class="player-card">
-      <video id="player" controls playsinline webkit-playsinline></video>
-      <div class="controls">
-        <input id="urlInput" class="input" placeholder="Tempel URL video (mp4, webm) lalu tekan 'Set URL'" />
-        <button id="setUrlBtn" class="btn">Set URL</button>
-        <label class="btn ghost" for="fileInput" style="padding:8px 10px;">Upload Video</label>
-        <input id="fileInput" type="file" accept="video/*" style="display:none" />
-        <button id="clearBtn" class="btn ghost">Reset</button>
-      </div>
+  <main class="container">
+    <div class="controls">
+      <input id="urlInput" class="input" placeholder="Masukkan URL video .mp4 (mis. https://...)" />
+      <button id="addUrlBtn" class="primary">Tambah dari URL</button>
+
+      <label class="input" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+        Pilih file lokal
+        <input id="fileInput" type="file" accept="video/mp4" style="display:none" />
+      </label>
+
+      <button id="clearBtn" class="input">Hapus semua</button>
     </div>
 
-    <div class="grid">
-      <div class="panel">
-        <h3 style="margin:0 0 6px 0">Video Saat Ini</h3>
-        <small id="currentInfo">Belum ada video disetel.</small>
+    <div id="grid" class="grid"></div>
 
-        <div style="margin-top:12px">
-          <label style="display:block;margin-bottom:6px">Autoplay</label>
-          <input type="checkbox" id="autoplay" />
-          <label style="display:block;margin-top:8px">Loop</label>
-          <input type="checkbox" id="loop" />
-        </div>
+    <div class="note">Catatan: file lokal hanya diputar di perangkat Anda (menggunakan object URL). Untuk mempublikasikan agar bisa diakses publik, unggah file MP4 ke layanan hosting (GitHub Pages untuk file kecil, Firebase Storage, Cloudflare R2, S3, atau penyedia CDN) lalu gunakan URL publik di kolom URL di atas.</div>
+  </main>
 
-        <footer>
-          <p style="margin:10px 0 0 0">Disimpan di browser Anda. Untuk hosting publik, gunakan GitHub Pages atau simpan video ke host lalu gunakan URL.</p>
-        </footer>
+  <footer>
+    Dibuat untuk demo — siap dipakai & dipublish (lihat komentar di kode untuk petunjuk hosting).
+  </footer>
+
+  <!-- Player Overlay -->
+  <div id="playerOverlay" class="fullplayer" style="display:none">
+    <div class="player-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div id="playerTitle" style="font-weight:700"></div>
+        <button id="closePlayer" class="close">✕</button>
       </div>
-
-      <div class="panel">
-        <h3 style="margin:0 0 6px 0">Daftar Video Tersimpan</h3>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <button id="refreshList" class="btn">Refresh</button>
-          <button id="exportList" class="btn ghost">Ekspor JSON</button>
-          <button id="importBtn" class="btn ghost">Impor JSON</button>
-          <input id="importFile" type="file" accept="application/json" style="display:none" />
-        </div>
-        <div class="list" id="list"></div>
-      </div>
+      <video id="mainVideo" controls style="width:100%;height:560px;background:#000" preload="metadata"></video>
     </div>
   </div>
 
   <script>
-    // Simple IndexedDB wrapper to store blobs
-    const DB_NAME = 'video_wall_db';
-    const STORE = 'videos';
-    let db;
+    // Simple MP4 video gallery.
+    // - You can add videos by URL (works if the host allows range requests and CORS) or choose a local MP4 file.
+    // - Local files are not uploaded anywhere; they use object URLs and play only on your device.
+    // Deployment tips (manual):
+    // 1) GitHub Pages: okay for small MP4s (<100MB typically); large files will exceed repo limits and are NOT recommended.
+    // 2) For public hosting of big MP4s use: Firebase Storage, Amazon S3 + CloudFront, Cloudflare R2, or specialized video hosts. Then paste the public URL into the URL box.
 
-    function openDB(){
-      return new Promise((res, rej)=>{
-        const rq = indexedDB.open(DB_NAME, 1);
-        rq.onupgradeneeded = e => {
-          const d = e.target.result;
-          if(!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE, {keyPath:'id'});
-        }
-        rq.onsuccess = e => { db = e.target.result; res(db); }
-        rq.onerror = e => rej(e.target.error);
-      });
-    }
-
-    function putItem(item){
-      return new Promise((res, rej)=>{
-        const tx = db.transaction(STORE, 'readwrite');
-        const st = tx.objectStore(STORE);
-        st.put(item);
-        tx.oncomplete = ()=>res(true);
-        tx.onerror = e=>rej(e.target.error);
-      });
-    }
-
-    function getAll(){
-      return new Promise((res, rej)=>{
-        const tx = db.transaction(STORE, 'readonly');
-        const st = tx.objectStore(STORE);
-        const all = st.getAll();
-        all.onsuccess = ()=>res(all.result);
-        all.onerror = e=>rej(e.target.error);
-      });
-    }
-
-    function getItem(id){
-      return new Promise((res, rej)=>{
-        const tx = db.transaction(STORE, 'readonly');
-        const st = tx.objectStore(STORE);
-        const rq = st.get(id);
-        rq.onsuccess = ()=>res(rq.result);
-        rq.onerror = e=>rej(e.target.error);
-      });
-    }
-
-    function delItem(id){
-      return new Promise((res, rej)=>{
-        const tx = db.transaction(STORE, 'readwrite');
-        const st = tx.objectStore(STORE);
-        st.delete(id);
-        tx.oncomplete = ()=>res(true);
-        tx.onerror = e=>rej(e.target.error);
-      });
-    }
-
-    // UI logic
-    const player = document.getElementById('player');
+    const grid = document.getElementById('grid');
     const urlInput = document.getElementById('urlInput');
-    const setUrlBtn = document.getElementById('setUrlBtn');
+    const addUrlBtn = document.getElementById('addUrlBtn');
     const fileInput = document.getElementById('fileInput');
-    const listEl = document.getElementById('list');
-    const currentInfo = document.getElementById('currentInfo');
-    const refreshList = document.getElementById('refreshList');
-    const exportList = document.getElementById('exportList');
-    const importBtn = document.getElementById('importBtn');
-    const importFile = document.getElementById('importFile');
     const clearBtn = document.getElementById('clearBtn');
-    const autoplayChk = document.getElementById('autoplay');
-    const loopChk = document.getElementById('loop');
+    const playerOverlay = document.getElementById('playerOverlay');
+    const mainVideo = document.getElementById('mainVideo');
+    const playerTitle = document.getElementById('playerTitle');
+    const closePlayer = document.getElementById('closePlayer');
 
-    async function init(){
-      await openDB();
-      loadSettings();
-      renderList();
-      const saved = localStorage.getItem('currentVideo');
-      if(saved){
-        const cur = JSON.parse(saved);
-        await setCurrentFromObject(cur);
-      }
+    // load sample list from localStorage (only metadata: title + url)
+    let videos = JSON.parse(localStorage.getItem('mp4_videos') || '[]');
+
+    function save() { localStorage.setItem('mp4_videos', JSON.stringify(videos)); }
+
+    function makeCard(v){
+      const card = document.createElement('div'); card.className='card';
+      const thumb = document.createElement('div'); thumb.className='thumb';
+      const vid = document.createElement('video'); vid.src = v.url; vid.muted = true; vid.playsInline = true; vid.preload = 'metadata';
+      vid.addEventListener('error', ()=>{ thumb.textContent = 'Preview tidak tersedia'; thumb.style.color='var(--muted)'; });
+      vid.addEventListener('loadeddata', ()=>{ thumb.innerHTML=''; thumb.appendChild(vid); });
+      thumb.appendChild(document.createTextNode('Memuat...'));
+
+      const meta = document.createElement('div'); meta.className='meta';
+      const title = document.createElement('div'); title.className='title'; title.textContent = v.title || (v.url.split('/').pop() || 'Video');
+      const actions = document.createElement('div');
+
+      const playBtn = document.createElement('button'); playBtn.className='input'; playBtn.textContent='▶ Putar';
+      playBtn.onclick = ()=>{ openPlayer(v); };
+
+      const delBtn = document.createElement('button'); delBtn.className='input'; delBtn.textContent='🗑️'; delBtn.title='Hapus';
+      delBtn.onclick = ()=>{ videos = videos.filter(x=>x.id!==v.id); save(); render(); }
+
+      const embedBtn = document.createElement('button'); embedBtn.className='input'; embedBtn.textContent='Embed';
+      embedBtn.onclick = ()=>{ prompt('HTML embed (copy):', `<video controls src="${v.url}" style="width:100%"></video>`); }
+
+      actions.appendChild(playBtn); actions.appendChild(embedBtn); actions.appendChild(delBtn);
+      meta.appendChild(title); meta.appendChild(actions);
+
+      card.appendChild(thumb); card.appendChild(meta);
+      return card;
     }
 
-    function loadSettings(){
-      autoplayChk.checked = localStorage.getItem('autoplay')==='1';
-      loopChk.checked = localStorage.getItem('loop')==='1';
-      player.autoplay = autoplayChk.checked;
-      player.loop = loopChk.checked;
-      autoplayChk.addEventListener('change', ()=>{player.autoplay = autoplayChk.checked; localStorage.setItem('autoplay', autoplayChk.checked? '1':'0')});
-      loopChk.addEventListener('change', ()=>{player.loop = loopChk.checked; localStorage.setItem('loop', loopChk.checked? '1':'0')});
+    function render(){
+      grid.innerHTML='';
+      videos.forEach(v=>grid.appendChild(makeCard(v)));
     }
 
-    async function renderList(){
-      listEl.innerHTML = '';
-      const items = await getAll();
-      if(!items || items.length===0){ listEl.innerHTML = '<small>Tidak ada video tersimpan. Upload file atau set URL.</small>'; return; }
-      items.sort((a,b)=>b.created-a.created);
-      for(const it of items){
-        const div = document.createElement('div'); div.className='item';
-        const thumb = document.createElement('div'); thumb.className='thumb'; thumb.textContent = it.name || 'video';
-        const info = document.createElement('div'); info.style.flex='1';
-        const title = document.createElement('div'); title.textContent = it.name || it.id;
-        const small = document.createElement('small'); small.textContent = new Date(it.created).toLocaleString();
-        info.appendChild(title); info.appendChild(small);
-        const btns = document.createElement('div'); btns.className='row';
-
-        const playBtn = document.createElement('button'); playBtn.className='btn ghost'; playBtn.textContent='Pilih';
-        playBtn.addEventListener('click', async ()=>{ await setCurrentFromObject(it); });
-
-        const dlBtn = document.createElement('button'); dlBtn.className='btn'; dlBtn.textContent='Unduh';
-        dlBtn.addEventListener('click', async ()=>{
-          if(it.url){ // external URL
-            const a = document.createElement('a'); a.href = it.url; a.download = it.name || 'video'; a.click();
-          } else if(it.blobKey){
-            const rec = await getItem(it.id);
-            const blob = rec.blob;
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = it.name || 'video'; a.click();
-            setTimeout(()=>URL.revokeObjectURL(url), 2000);
-          }
-        });
-
-        const delBtn = document.createElement('button'); delBtn.className='btn danger'; delBtn.textContent='Hapus';
-        delBtn.addEventListener('click', async ()=>{ if(confirm('Hapus video ini?')){ await delItem(it.id); renderList(); }});
-
-        btns.appendChild(playBtn); btns.appendChild(dlBtn); btns.appendChild(delBtn);
-        div.appendChild(thumb); div.appendChild(info); div.appendChild(btns);
-        listEl.appendChild(div);
-      }
+    function openPlayer(v){
+      playerTitle.textContent = v.title || v.url.split('/').pop();
+      mainVideo.src = v.url;
+      playerOverlay.style.display = 'flex';
+      mainVideo.play().catch(()=>{});
     }
 
-    async function setCurrentFromObject(obj){
-      currentInfo.textContent = 'Memuat...';
-      if(obj.url){
-        player.src = obj.url;
-        localStorage.setItem('currentVideo', JSON.stringify(obj));
-        currentInfo.textContent = (obj.name||obj.url);
-      } else if(obj.blobKey){
-        const rec = await getItem(obj.id);
-        if(!rec) { currentInfo.textContent = 'Gagal memuat.'; return; }
-        const blob = rec.blob;
-        const url = URL.createObjectURL(blob);
-        player.src = url;
-        localStorage.setItem('currentVideo', JSON.stringify(obj));
-        currentInfo.textContent = (obj.name||obj.id);
+    closePlayer.onclick = ()=>{ mainVideo.pause(); mainVideo.src=''; playerOverlay.style.display='none'; }
+    playerOverlay.addEventListener('click', (e)=>{ if(e.target===playerOverlay) closePlayer.onclick(); });
+
+    addUrlBtn.onclick = ()=>{
+      const url = urlInput.value.trim();
+      if(!url) return alert('Masukkan URL file .mp4');
+      if(!url.toLowerCase().endsWith('.mp4')){
+        if(!confirm('URL tidak berakhir dengan .mp4. Tetap lanjutkan?')) return;
       }
-      player.play().catch(()=>{});
+      const id = Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+      videos.unshift({id, url, title: '', added: Date.now()}); save(); render(); urlInput.value='';
     }
 
-    setUrlBtn.addEventListener('click', async ()=>{
-      const val = urlInput.value.trim();
-      if(!val) return alert('Masukkan URL video.');
-      const id = 'url-'+Date.now();
-      const item = {id, name: val.split('/').pop().split('?')[0], url: val, created: Date.now() };
-      await putItem(item);
-      await renderList();
-      await setCurrentFromObject(item);
-      urlInput.value='';
-    });
-
-    fileInput.addEventListener('change', async (e)=>{
-      const f = e.target.files[0];
-      if(!f) return;
-      const id = 'blob-'+Date.now();
-      const reader = new FileReader();
-      reader.onload = async function(){
-        const blob = new Blob([this.result], {type: f.type});
-        const item = {id, name: f.name, blob, created: Date.now(), blobKey: true };
-        await putItem(item);
-        await renderList();
-        await setCurrentFromObject(item);
-        fileInput.value='';
-      };
-      reader.readAsArrayBuffer(f);
-    });
-
-    refreshList.addEventListener('click', renderList);
-
-    exportList.addEventListener('click', async ()=>{
-      const items = await getAll();
-      // We do not include blobs in export (too big). Instead export metadata + external URLs.
-      const out = items.map(i=>({id:i.id,name:i.name,url:i.url,created:i.created,blobIncluded:!!i.blobKey}));
-      const blob = new Blob([JSON.stringify(out, null, 2)], {type:'application/json'});
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'video_list.json'; a.click();
-      setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-    });
-
-    importBtn.addEventListener('click', ()=>importFile.click());
-    importFile.addEventListener('change', async (e)=>{
-      const f = e.target.files[0]; if(!f) return;
-      const txt = await f.text();
-      try{ const arr = JSON.parse(txt); for(const a of arr){ if(a.url){ await putItem({id:a.id||('url-'+Date.now()), name:a.name||a.id, url:a.url, created:a.created||Date.now()}); }} renderList(); alert('Impor selesai (hanya URL diimpor).'); }catch(err){alert('Format JSON salah.');}
-      importFile.value='';
-    });
-
-    clearBtn.addEventListener('click', ()=>{
-      if(confirm('Reset: hapus pilihan saat ini (tidak menghapus video tersimpan)?')){
-        player.src=''; localStorage.removeItem('currentVideo'); currentInfo.textContent='Belum ada video disetel.';
+    fileInput.addEventListener('change', async (ev)=>{
+      const file = ev.target.files[0];
+      if(!file) return;
+      if(file.type !== 'video/mp4'){
+        if(!confirm('File bukan MP4, tetap lanjut?')) return;
       }
+      // Create object URL for local playback. Note: this URL is not public and will break after page closed.
+      const objectUrl = URL.createObjectURL(file);
+      const id = Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+      videos.unshift({id, url: objectUrl, title: file.name, local:true}); save(); render();
+      // We do not persist file data to server. To publish: upload to public host and add the public URL.
     });
 
-    // On load
-    init().catch(e=>{ console.error(e); alert('Gagal inisialisasi penyimpanan browser. Pastikan browser mendukung IndexedDB.'); });
+    clearBtn.onclick = ()=>{ if(confirm('Hapus semua video dari daftar?')){ videos=[]; save(); render(); } }
+
+    // initial render
+    render();
   </script>
 </body>
 </html>
