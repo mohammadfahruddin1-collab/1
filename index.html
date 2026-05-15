@@ -1,4 +1,8 @@
+# Video Intro Hacker Style (HTML)
 
+Simpan file ini dengan nama `index.html` lalu buka di browser.
+
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -59,6 +63,11 @@
     }
 
     .glitch{
+      overflow:hidden;
+      white-space:nowrap;
+      border-right:4px solid #00ff00;
+      animation:typing 3s steps(20,end), blinkCursor 0.7s infinite, glitch 0.2s infinite;
+
       position:absolute;
       top:50%;
       left:50%;
@@ -76,7 +85,13 @@
       z-index:5;
     }
 
-    @keyframes glitch{
+    @keyframes typing{
+      from{width:0}
+      to{width:100%}
+    }
+
+    @keyframes blinkCursor{
+      50%{bor
       0%{transform:translate(-50%,-50%) skew(0deg)}
       20%{transform:translate(-49%,-50%) skew(2deg)}
       40%{transform:translate(-51%,-50%) skew(-2deg)}
