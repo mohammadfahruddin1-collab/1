@@ -1,211 +1,241 @@
-# Video Intro Hacker Style (HTML)
-
-Simpan file ini dengan nama `index.html` lalu buka di browser.
-
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hacker Intro</title>
-
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Consolas, monospace;
-    }
-
-    body{
-      overflow:hidden;
-      background:black;
-    }
-
-    video{
-      position:fixed;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      opacity:0.15;
-    }
-
-    .matrix{
-      position:absolute;
-      width:100%;
-      height:100%;
-      color:#00ff00;
-      font-size:14px;
-      overflow:hidden;
-      opacity:0.35;
-      pointer-events:none;
-    }
-
-    .scanline{
-      position:absolute;
-      width:100%;
-      height:100%;
-      background:linear-gradient(
-        rgba(255,255,255,0.03) 50%,
-        transparent 50%
-      );
-      background-size:100% 4px;
-      animation:scan 0.15s linear infinite;
-      pointer-events:none;
-    }
-
-    @keyframes scan{
-      from{transform:translateY(0)}
-      to{transform:translateY(4px)}
-    }
-
-    .glitch{
-      overflow:hidden;
-      white-space:nowrap;
-      border-right:4px solid #00ff00;
-      animation:typing 3s steps(20,end), blinkCursor 0.7s infinite, glitch 0.2s infinite;
-
-      position:absolute;
-      top:50%;
-      left:50%;
-      width:100%;
-      text-align:center;
-      transform:translate(-50%,-50%);
-      color:#00ff00;
-      font-size:120px;
-      font-weight:bold;
-      text-shadow:
-        0 0 5px #00ff00,
-        0 0 20px #00ff00,
-        0 0 40px #00ff00;
-      animation:glitch 0.2s infinite;
-      z-index:5;
-    }
-
-    @keyframes typing{
-      from{width:0}
-      to{width:100%}
-    }
-
-    @keyframes blinkCursor{
-      50%{bor
-      0%{transform:translate(-50%,-50%) skew(0deg)}
-      20%{transform:translate(-49%,-50%) skew(2deg)}
-      40%{transform:translate(-51%,-50%) skew(-2deg)}
-      60%{transform:translate(-50%,-49%) skew(1deg)}
-      80%{transform:translate(-50%,-51%) skew(-1deg)}
-      100%{transform:translate(-50%,-50%) skew(0deg)}
-    }
-
-    .hacker-face{
-      position:absolute;
-      top:50%;
-      left:50%;
-      transform:translate(-50%,-50%) scale(0.2);
-      width:450px;
-      opacity:0;
-      filter:drop-shadow(0 0 30px #00ff00);
-      animation:zoomFace 6s forwards;
-      z-index:10;
-    }
-
-    @keyframes zoomFace{
-      0%{
-        transform:translate(-50%,-50%) scale(0.2);
-        opacity:0;
-      }
-
-      40%{
-        opacity:0;
-      }
-
-      60%{
-        opacity:1;
-        transform:translate(-50%,-50%) scale(1);
-      }
-
-      100%{
-        opacity:1;
-        transform:translate(-50%,-50%) scale(2.8);
-      }
-    }
-
-    .loading{
-      position:absolute;
-      bottom:60px;
-      left:50%;
-      transform:translateX(-50%);
-      color:#00ff00;
-      font-size:20px;
-      letter-spacing:4px;
-      z-index:8;
-      animation:blink 1s infinite;
-    }
-
-    @keyframes blink{
-      50%{opacity:0.2}
-    }
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL ACCESS - CENTRAL DATABASE</title>
+    <style>
+        body {
+            background-color: #050505;
+            color: #00ff33;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .terminal-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #00ff33;
+            box-shadow: 0 0 15px rgba(0, 255, 51, 0.2);
+            background: rgba(0, 10, 0, 0.9);
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 1px dashed #00ff33;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: blink 1.5s infinite;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-box label {
+            font-size: 18px;
+            align-self: center;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            background: #000;
+            border: 1px solid #00ff33;
+            color: #00ff33;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            outline: none;
+        }
+        input[type="text"]:focus {
+            box-shadow: 0 0 10px rgba(0, 255, 51, 0.5);
+        }
+        button {
+            background: #00ff33;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        button:hover {
+            background: #00cc25;
+            box-shadow: 0 0 10px rgba(0, 255, 51, 0.5);
+        }
+        #status-log {
+            margin-bottom: 20px;
+            color: #888;
+            font-size: 14px;
+            min-height: 40px;
+        }
+        .profile-card {
+            display: none;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            border: 1px solid #00ff33;
+            padding: 20px;
+            background: rgba(0, 30, 0, 0.5);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @media (max-width: 600px) {
+            .profile-card { grid-template-columns: 1fr; }
+        }
+        .photo-frame {
+            border: 2px solid #00ff33;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+        .photo-frame::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: rgba(0, 255, 51, 0.5);
+            animation: scan 2s linear infinite;
+        }
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(120%) brightness(90%);
+        }
+        .info-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .info-row {
+            display: flex;
+            border-bottom: 1px dotted rgba(0, 255, 51, 0.3);
+            padding-bottom: 5px;
+        }
+        .info-label {
+            width: 140px;
+            font-weight: bold;
+            color: #00cc25;
+        }
+        .info-value {
+            flex-grow: 1;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- background optional -->
-  <video autoplay muted loop>
-    <source src="https://cdn.coverr.co/videos/coverr-computer-code-on-screen-1560676888574?download=1080p" type="hacker.png">
-  </video>
+<div class="terminal-container">
+    <div class="header">
+        === MAIN DATABASE ACCESS - SYSTEM OVERRIDE ===
+    </div>
 
-  <div class="matrix" id="matrix"></div>
+    <div class="search-box">
+        <label for="search-input">></label>
+        <input type="text" id="search-input" placeholder="MASUKKAN NAMA TARGET (contoh: budi atau siti)..." autocomplete="off">
+        <button onclick="searchDatabase()">BYPASS</button>
+    </div>
 
-  <div class="scanline"></div>
+    <div id="status-log">SIAP MENERIMA PERINTAH...</div>
 
-  <div class="glitch">ERROR YOUR SYSTEM</div>
+    <div class="profile-card" id="profile-result">
+        <div class="photo-frame">
+            <img id="target-photo" src="" alt="Target Photo">
+        </div>
+        <div class="info-details">
+            <div class="info-row"><span class="info-label">NAMA:</span> <span class="info-value" id="res-name">-</span></div>
+            <div class="info-row"><span class="info-label">STATUS:</span> <span class="info-value" id="res-status" style="color: red;">-</span></div>
+            <div class="info-row"><span class="info-label">ALAMAT:</span> <span class="info-value" id="res-location">-</span></div>
+            <div class="info-row"><span class="info-label">IP ADDRESS:</span> <span class="info-value" id="res-ip">-</span></div>
+            <div class="info-row"><span class="info-label">KEAHLIAN:</span> <span class="info-value" id="res-skill">-</span></div>
+            <div class="info-row"><span class="info-label">CATATAN:</span> <span class="info-value" id="res-note">-</span></div>
+        </div>
+    </div>
+</div>
 
-  <img class="hacker-face"
-       src="https://i.imgur.com/0Z8FQ5p.png"
-       alt="hacker">
+<script>
+    // Database lokal. Kamu bisa ganti path foto ke "assets/nama_file.jpg"
+    const database = [
+        {
+            nama: "budi",
+            namaLengkap: "Budi Setyawan",
+            status: "WANTED / AWOL",
+            lokasi: "Jakarta, Indonesia",
+            ip: "192.168.1.105",
+            keahlian: "Cyber Security & Social Engineering",
+            catatan: "Terlihat terakhir di warnet subuh-subuh sambil minum kopi hitam.",
+            foto: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400" 
+        },
+        {
+            nama: "siti",
+            namaLengkap: "Siti Rahmawati",
+            status: "ACTIVE AGENT",
+            lokasi: "Bandung, Indonesia",
+            ip: "10.0.24.11",
+            keahlian: "Database Penetration & Cryptography",
+            catatan: "Sering meretas wifi tetangga untuk mengunduh modul kuliah.",
+            foto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400"
+        }
+    ];
 
-  <div class="loading">SYSTEM LOADING.....</div>
+    function searchDatabase() {
+        const input = document.getElementById('search-input').value.toLowerCase().trim();
+        const log = document.getElementById('status-log');
+        const card = document.getElementById('profile-result');
 
-  <script>
+        if (input === "") {
+            log.innerHTML = "ERROR: INPUT TIDAK BOLEH KOSONG.";
+            card.style.display = 'none';
+            return;
+        }
 
-    const matrix = document.getElementById('matrix');
+        log.innerHTML = "MENGHUBUNGKAN KE SERVER...<br>BYPASSING FIREWALL...<br>MENCARI DATA: " + input.toUpperCase();
+        card.style.display = 'none';
 
-    const chars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@";
+        setTimeout(() => {
+            const hasil = database.find(target => target.nama.toLowerCase() === input || target.namaLengkap.toLowerCase().includes(input));
 
-    function generateMatrix(){
-      let output = "";
+            if (hasil) {
+                log.innerHTML = "<span style='color: #00ff33;'>AKSES DIIZINKAN. DATA DITEMUKAN.</span>";
+                
+                document.getElementById('res-name').innerText = hasil.namaLengkap;
+                document.getElementById('res-status').innerText = hasil.status;
+                document.getElementById('res-location').innerText = hasil.lokasi;
+                document.getElementById('res-ip').innerText = hasil.ip;
+                document.getElementById('res-skill').innerText = hasil.keahlian;
+                document.getElementById('res-note').innerText = hasil.catatan;
+                document.getElementById('target-photo').src = hasil.foto;
 
-      for(let i=0;i<3000;i++){
-        output += chars[Math.floor(Math.random()*chars.length)];
-
-        if(i%120===0) output += "<br>";
-      }
-
-      matrix.innerHTML = output;
+                card.style.display = 'grid';
+            } else {
+                log.innerHTML = "<span style='color: red;'>AKSES DITOLAK: DATA TIDAK DITEMUKAN DALAM ARSIP.</span>";
+                card.style.display = 'none';
+            }
+        }, 1500);
     }
 
-    setInterval(generateMatrix,100);
-
-  </script>
-
+    document.getElementById('search-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            searchDatabase();
+        }
+    });
+</script>
 </body>
 </html>
-```
-
-## Cara bikin jadi video MP4
-
-1. Buka HTML di browser.
-2. Rekam layar pakai OBS Studio.
-3. Atau upload ke CapCut lalu export MP4.
-4. Bisa ditambah suara glitch / typing keyboard biar makin cinematic.
-
-## Biar lebih keren
-
-* Ganti tulisan `ACCESS GRANTED` jadi nama kamu.
-* Ganti gambar hacker dengan foto topeng anonymous.
-* Tambahkan suara bass / glitch.
-* Export rasio 16:9 untuk YouTube atau 9:16 untuk TikTok.
