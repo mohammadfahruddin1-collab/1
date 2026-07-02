@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OVERRIDE SYSTEM v5.0 - OVERLAPPING DISORGANIZED UI</title>
+    <title>SISTEM PENGINTAI v6.0 - NEW TAB LAYER</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         @font-face {
@@ -25,71 +25,72 @@
             text-shadow: 0 0 4px #0f3;
         }
 
-        /* JENDELA GAYA OS HACKER (Saling Menumpuk Bebas / Chaos Layout) */
+        /* GAYA JENDELA ACAK (NEW TAB LAYER) */
         .window {
             position: absolute;
             border: 1px solid #0f3;
-            background: rgba(0, 8, 0, 0.92);
-            box-shadow: 0 0 20px rgba(0, 255, 51, 0.15);
+            background: rgba(0, 8, 0, 0.95);
+            box-shadow: 0 0 20px rgba(0, 255, 51, 0.2);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         .window-header {
             background-color: #0f3;
             color: #000;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
-            padding: 4px 8px;
+            padding: 2px 6px;
             text-transform: uppercase;
             text-shadow: none;
             display: flex;
             justify-content: space-between;
-            cursor: move;
+            cursor: move; /* Menandakan bisa digeser (fungsi drag tidak diimplementasikan) */
         }
 
         .window-content {
-            padding: 10px;
-            font-size: 11px;
+            padding: 8px;
+            font-size: 10px;
             overflow: hidden;
             flex-grow: 1;
             position: relative;
         }
 
-        /* POSISI ACAK DAN BERLAPIS (Overlapping) */
-        
-        /* 1. Jendela Log Background (Kiri Belakang) */
+        /* POSISI ACAK DAN SALING MENUMPUK */
+
+        /* 1. Jendela Log (Kiri Belakang) */
         .win-log {
-            top: 5%; left: 2%; width: 300px; height: 350px; z-index: 10;
+            top: 10%; left: 5%; width: 280px; height: 300px; z-index: 10;
         }
 
         /* 2. Jendela Bola Dunia (Kanan Belakang) */
         .win-globe {
-            top: 4%; right: 3%; width: 420px; height: 420px; z-index: 15;
+            top: 5%; right: 8%; width: 400px; height: 400px; z-index: 15;
         }
 
-        /* 3. Jendela CCTV Intel (Kiri Bawah) */
+        /* 3. Jendela CCTV (Kiri Bawah) */
         .win-cctv {
-            bottom: 6%; left: 3%; width: 380px; height: 260px; z-index: 20;
+            bottom: 10%; left: 8%; width: 350px; height: 250px; z-index: 20;
         }
 
-        /* 4. JENDELA UTAMA DATA TARGET (Tepat di Tengah Depan) */
-        .win-main-database {
+        /* 4. JENDELA UTAMA DATA TARGET (DI TENGAH DEPAN) */
+        .win-main-data {
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 520px;
-            min-height: 380px;
-            z-index: 100; /* Kasta tertinggi, menutupi jendela lain */
+            width: 500px;
+            min-height: 350px;
+            z-index: 100; /* Z-index tertinggi agar menutupi yang lain */
             border: 2px solid #0f3;
-            box-shadow: 0 0 30px rgba(0, 255, 51, 0.4);
-            background: rgba(0, 12, 0, 0.97);
+            box-shadow: 0 0 30px rgba(0, 255, 51, 0.5);
+            background: rgba(0, 10, 0, 0.98);
         }
 
         /* Komponen Input */
         .search-container {
             display: flex;
             gap: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         input[type="text"] {
@@ -97,17 +98,17 @@
             background: #000;
             border: 1px solid #0f3;
             color: #0f3;
-            padding: 8px;
+            padding: 6px;
             font-family: 'HackerFont', monospace;
             outline: none;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         button {
             background: #0f3;
             color: #000;
             border: none;
-            padding: 8px 20px;
+            padding: 6px 15px;
             font-family: 'HackerFont', monospace;
             font-weight: bold;
             cursor: pointer;
@@ -115,18 +116,18 @@
 
         /* Desain Data Target */
         .profile-card {
-            display: none;
-            grid-template-columns: 120px 1fr;
+            display: none; /* Sembunyikan sebelum dicari */
+            grid-template-columns: 110px 1fr;
             gap: 15px;
             animation: fadeIn 0.3s ease-out;
             margin-top: 10px;
             border-top: 1px dashed rgba(0,255,51,0.4);
-            padding-top: 15px;
+            padding-top: 10px;
         }
 
         .photo-box {
             border: 1px solid #0f3;
-            height: 140px;
+            height: 130px;
             background: #000;
             position: relative;
         }
@@ -135,7 +136,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(100%) contrast(130%) brightness(90%);
+            filter: grayscale(100%) contrast(120%) brightness(90%);
         }
 
         .photo-box::after {
@@ -145,272 +146,9 @@
             height: 2px;
             background: #0f3;
             top: 0;
-            animation: scanline 2.5s linear infinite;
+            animation: scanline 2s linear infinite;
         }
 
         .details-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            font-size: 11px;
-        }
-
-        /* Komponen Struktur Map Bola Dunia */
-        #globe-container {
-            width: 100%;
-            height: 90%;
-            background: #000;
-        }
-
-        /* Tampilan Visual Komponen CCTV */
-        .cctv-screen {
-            width: 100%;
-            height: 88%;
-            background: #000;
-            border: 1px solid #0f3;
-            position: relative;
-        }
-
-        .cctv-screen video {
-            width: 100%; height: 100%; object-fit: cover;
-        }
-
-        .cctv-overlay {
-            position: absolute; top: 5px; left: 5px; color: red; font-weight: bold; animation: blink 1s infinite;
-        }
-
-        #terminal-output {
-            color: #0a3; height: 90%; overflow-y: auto; font-size: 10px;
-        }
-
-        /* Animasi Efek */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        @keyframes scanline { 0% { top: 0; } 100% { top: 100%; } }
-    </style>
-</head>
-<body>
-
-<div class="window win-log">
-    <div class="window-header"><span>SYSTEM_CORE_LOGS</span><span>[_]</span></div>
-    <div class="window-content">
-        <div id="terminal-output"></div>
-    </div>
-</div>
-
-<div class="window win-cctv">
-    <div class="window-header"><span>LIVE CCTV INTEL FEED</span><span>[LIVE]</span></div>
-    <div class="window-content">
-        <div class="cctv-screen">
-            <div class="cctv-overlay">REC ● CAM_INTEL</div>
-            <video id="cctv-video" src="https://assets.mixkit.co/videos/preview/mixkit-security-camera-of-a-corridor-of-a-building-40176-large.mp4" loop muted playsinline></video>
-            <div id="cctv-static" style="display: flex; align-items: center; justify-content: center; height:100%; color:#0f3;">STANDBY_NODE...</div>
-        </div>
-    </div>
-</div>
-
-<div class="window win-globe">
-    <div class="window-header"><span>GLOBAL GEOLOCATION REGION TRACER</span><span>[-]</span></div>
-    <div class="window-content">
-        <div id="globe-container"></div>
-    </div>
-</div>
-
-<div class="window win-main-database">
-    <div class="window-header"><span>🎯 TARGET DETAILS DECRYPTER</span><span>[MAIN_NODE]</span></div>
-    <div class="window-content">
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="MASUKKAN CALLSIGN TARGET (contoh: li, budi)..." onkeydown="playTypeSound()" autocomplete="off">
-            <button onclick="executeBypass()">BYPASS</button>
-        </div>
-        <div id="status-log">> DATA_DECRYPTER: AWAITING TARGET INPUT CRITERIA...</div>
-
-        <div class="profile-card" id="profile-result">
-            <div class="photo-box"><img id="target-photo" src=""></div>
-            <div>
-                <div style="font-size:15px; border-bottom:1px solid #0f3; margin-bottom:8px; padding-bottom:3px;">
-                    <strong>NAME:</strong> <span id="res-name">-</span>
-                </div>
-                <div class="details-grid">
-                    <div><strong>pinyio:</strong> <span id="res-pinyin">-</span></div>
-                    <div><strong>DOB:</strong> <span id="res-dob">-</span></div>
-                    <div><strong>IP:</strong> <span id="res-ip">-</span></div>
-                    <div><strong>LOC:</strong> <span id="res-loc">-</span></div>
-                    <div><strong>STATUS:</strong> <span id="res-status" style="color:red;">-</span></div>
-                    <div><strong>CODE:</strong> <span id="res-code">-</span></div>
-                </div>
-                <div style="font-size:10px; margin-top:10px; color:#888;">PENDING SECURE HANDSHAKE... Verified</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // --- SYNTHESIZER EFEK SUARA AUDIO ---
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    function playTypeSound() {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(140 + Math.random() * 80, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.04);
-    }
-
-    function playSuccessAlarm() {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-    }
-
-    // --- STRUKTUR DATA TARGET ---
-    const database = [
-        {
-            callsign: "li", name: "Li Guoliang", pinyin: "Li Guoliang (李國樑)", dob: "1983/03/16", code: "CN_X902", loc: "CHINA (中国)", ip: "103.22.109.4", status: "FOUND / LOCKED",
-            foto: "https://images.unsplash.com/photo-1549740429-121580232c76?w=200",
-            video: "https://assets.mixkit.co/videos/preview/mixkit-security-camera-of-a-corridor-of-a-building-40176-large.mp4",
-            lat: 35.8617, lon: 104.1954 // Koordinat China Tengah
-        },
-        {
-            callsign: "budi", name: "Budi Setyawan", pinyin: "budi_setyawan.exe", dob: "1994/11/02", code: "ID_B007", loc: "INDONESIA", ip: "192.168.43.11", status: "TRACKING_ACTIVE",
-            foto: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200",
-            video: "https://assets.mixkit.co/videos/preview/mixkit-people-walking-in-a-modern-subway-station-40092-large.mp4",
-            lat: -0.7893, lon: 113.9213 // Koordinat Indonesia Tengah
-        }
-    ];
-
-    // --- INTEGRASI WEBGL THREE.JS (BOLA DUNIA WILAYAH DAN TEKS) ---
-    const container = document.getElementById('globe-container');
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild(renderer.domElement);
-
-    camera.position.z = 11;
-
-    // Membuat Dunia Utama Jaring-Jaring (Globe Base)
-    const globeGeo = new THREE.SphereGeometry(4.5, 30, 30);
-    const globeMat = new THREE.MeshBasicMaterial({ color: 0x003311, wireframe: true, transparent: true, opacity: 0.3 });
-    const globeBase = new THREE.Mesh(globeGeo, globeMat);
-    scene.add(globeBase);
-
-    // Memuat Tekstur Gambar Peta Dunia Wilayah Transparan agar menempel membentuk benua nyata
-    const textureLoader = new THREE.TextureLoader();
-    // Menggunakan peta dunia siluet transparan berlisensi publik
-    const earthTexture = textureLoader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Earthmap1000x500compac.jpg/640px-Earthmap1000x500compac.jpg', (tex) => {
-        const landMat = new THREE.MeshBasicMaterial({ map: tex, color: 0x00ff33, wireframe: true, transparent: true, opacity: 0.3 });
-        const landMesh = new THREE.Mesh(globeGeo, landMat);
-        globeBase.add(landMesh); // Gabungkan tanah benua ke dalam rotasi objek bola dunia
-    });
-
-    // Menandai Text Label Negara fiktif di dalam Koordinat Ruang 3D
-    const countries = [
-        { name: "RUSSIA", lat: 61.524, lon: 105.318 },
-        { name: "CHINA", lat: 35.861, lon: 104.195 },
-        { name: "INDONESIA", lat: -0.789, lon: 113.921 },
-        { name: "USA", lat: 37.090, lon: -95.712 }
-    ];
-
-    function convertCoords(lat, lon, radius) {
-        const phi = (90 - lat) * (Math.PI / 180); const theta = (lon + 180) * (Math.PI / 180);
-        return {
-            x: -(radius * Math.sin(phi) * Math.sin(theta)),
-            y: radius * Math.cos(phi),
-            z: radius * Math.sin(phi) * Math.cos(theta)
-        };
-    }
-
-    // Indikator Pin Titik Target Merah Meretas
-    const markerGeo = new THREE.SphereGeometry(0.18, 8, 8);
-    const markerMat = new THREE.MeshBasicMaterial({ color: 0xff0000, visible: false });
-    const targetMarker = new THREE.Mesh(markerGeo, markerMat);
-    scene.add(targetMarker);
-
-    let isLocked = false;
-    function animate() {
-        requestAnimationFrame(animate);
-        if (!isLocked) { globeBase.rotation.y += 0.004; globeBase.rotation.x = 0.2; }
-        renderer.render(scene, camera);
-    }
-    animate();
-
-    // --- SISTEM EXECUTE BYPASS DATA ---
-    function executeBypass() {
-        const input = document.getElementById('search-input').value.toLowerCase().trim();
-        const log = document.getElementById('status-log');
-        const card = document.getElementById('profile-result');
-        const vVideo = document.getElementById('cctv-video');
-        const vStatic = document.getElementById('cctv-static');
-
-        if(input === "") return;
-
-        log.innerHTML = "BREACHING INTERPOL SECURITY MATRIX...<br>DOWNLOADING PACKETS FROM LOCAL NODES...";
-        card.style.display = 'none'; vVideo.style.display = 'none'; vStatic.style.display = 'flex';
-        isLocked = false; targetMarker.material.visible = false;
-
-        setTimeout(() => {
-            const res = database.find(t => t.callsign === input || t.name.toLowerCase().includes(input));
-            if(res) {
-                log.innerHTML = "<span style='color:#0f3'>CRITICAL INTEL ACCESS DECRYPTED SUCCESSFULLY.</span>";
-                playSuccessAlarm();
-
-                document.getElementById('res-name').innerText = res.name;
-                document.getElementById('res-pinyin').innerText = res.pinyin;
-                document.getElementById('res-dob').innerText = res.dob;
-                document.getElementById('res-loc').innerText = res.loc;
-                document.getElementById('res-ip').innerText = res.ip;
-                document.getElementById('res-status').innerText = res.status;
-                document.getElementById('res-code').innerText = res.code;
-                document.getElementById('target-photo').src = res.foto;
-                card.style.display = 'grid';
-
-                // Mengarahkan Koordinat Kamera Peta Menuju Wilayah Target
-                isLocked = true;
-                const pos = convertCoords(res.lat, res.lon, 4.55);
-                targetMarker.position.set(pos.x, pos.y, pos.z);
-                targetMarker.material.visible = true;
-
-                globeBase.rotation.set(0,0,0);
-                camera.position.set(pos.x * 2.2, pos.y * 2.2, pos.z * 2.2);
-                camera.lookAt(pos.x, pos.y, pos.z);
-
-                // Mengaktifkan Pembajakan Video CCTV
-                vStatic.style.display = 'none'; vVideo.style.display = 'block';
-                vVideo.src = res.video; vVideo.play().catch(()=>{});
-            } else {
-                log.innerHTML = "<span style='color:red'>ACCESS DENIED: SIGNATURE REJECTED FROM CENTRAL FIREWALL.</span>";
-                vStatic.innerText = "SIGNAL TERMINATED";
-            }
-        }, 1500);
-    }
-
-    // Event handler tombol Enter
-    document.getElementById('search-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') executeBypass();
-    });
-
-    // --- BACKGROUND AUTOMATIC GENERATOR PACKET LOGS ---
-    setInterval(() => {
-        const out = document.getElementById('terminal-output');
-        const simulatedLogs = [
-            `> SYN Flood packets routed to US_EAST`,
-            `> Mapping country database nodes...`,
-            `> Country Identified: [RUSSIA / USA / CHINA / ID]`,
-            `> Override stack pointer address ox7FFF...`
-        ];
-        out.innerHTML += `<div>${simulatedLogs[Math.floor(Math.random() * simulatedLogs.length)]}</div>`;
-        out.scrollTop = out.scrollHeight;
-        if(out.childElementCount > 16) out.removeChild(out.firstChild);
-    }, 1100);
-</script>
-</body>
-</html>
