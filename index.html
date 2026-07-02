@@ -3,198 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL ACCESS - CENTRAL DATABASE</title>
+    <title>CENTRAL SYSTEM OVERRIDE - ADVANCED DB ACCESS</title>
     <style>
+        /* Menggunakan font monospace untuk kesan terminal */
+        @font-face {
+            font-family: 'HackerFont';
+            src: local('Courier New'), local('Courier'), monospace;
+        }
+
         body {
-            background-color: #050505;
-            color: #00ff33;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 20px;
+            background-color: #000;
+            color: #0f3;
+            font-family: 'HackerFont', monospace;
+            padding: 10px;
             margin: 0;
-            overflow-x: hidden;
+            overflow: hidden; /* Mencegah scrollbar */
+            background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
+            background-size: 100% 2px;
+            text-shadow: 0 0 5px #0f3, 0 0 10px #0f3; /* Efek neon glow */
         }
-        .terminal-container {
-            max-width: 800px;
-            margin: 0 auto;
-            border: 1px solid #00ff33;
-            box-shadow: 0 0 15px rgba(0, 255, 51, 0.2);
-            background: rgba(0, 10, 0, 0.9);
-            padding: 20px;
+
+        /* Wadah Utama untuk Multi-Window Layout */
+        .terminal-grid {
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 10px;
+            height: calc(100vh - 40px); /* Menyesuaikan tinggi agar pas di layar */
         }
-        .header {
-            text-align: center;
-            border-bottom: 1px dashed #00ff33;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+
+        /* Gaya Bingkai Jendela (Window Frame) */
+        .window {
+            border: 1px solid #0f3;
+            background: rgba(0, 5, 0, 0.8);
+            box-shadow: 0 0 15px rgba(0, 255, 51, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .window-header {
+            background-color: #0f3;
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 8px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: blink 1.5s infinite;
+            text-shadow: none; /* Menghapus efek neon pada header */
         }
+
+        .window-content {
+            padding: 8px;
+            font-size: 12px;
+            overflow: hidden;
+        }
+
+        /* --- Jendela Pencarian Utama (Main Search) --- */
+        .main-search-window {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+        }
+
         .search-box {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
-        .search-box label {
-            font-size: 18px;
-            align-self: center;
-        }
+
         input[type="text"] {
             flex-grow: 1;
             background: #000;
-            border: 1px solid #00ff33;
-            color: #00ff33;
-            padding: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
+            border: 1px solid #0f3;
+            color: #0f3;
+            padding: 4px;
+            font-family: 'HackerFont', monospace;
+            font-size: 14px;
             outline: none;
         }
-        input[type="text"]:focus {
-            box-shadow: 0 0 10px rgba(0, 255, 51, 0.5);
-        }
+
         button {
-            background: #00ff33;
+            background: #0f3;
             color: #000;
             border: none;
-            padding: 10px 20px;
-            font-family: 'Courier New', monospace;
+            padding: 4px 10px;
+            font-family: 'HackerFont', monospace;
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
         }
-        button:hover {
-            background: #00cc25;
-            box-shadow: 0 0 10px rgba(0, 255, 51, 0.5);
-        }
-        #status-log {
-            margin-bottom: 20px;
-            color: #888;
-            font-size: 14px;
-            min-height: 40px;
-        }
+
+        /* --- Jendela Hasil Data (Profile Card) --- */
         .profile-card {
-            display: none;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-            border: 1px solid #00ff33;
-            padding: 20px;
-            background: rgba(0, 30, 0, 0.5);
+            display: none; /* Sembunyikan sebelum dicari */
+            grid-template-columns: 100px 1fr;
+            gap: 10px;
             animation: fadeIn 0.5s ease-in-out;
         }
-        @media (max-width: 600px) {
-            .profile-card { grid-template-columns: 1fr; }
-        }
+
         .photo-frame {
-            border: 2px solid #00ff33;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-            height: 220px;
+            border: 1px solid #0f3;
+            height: 120px;
+            width: 100px;
             overflow: hidden;
-            position: relative;
+            background: #000;
         }
-        .photo-frame::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 3px;
-            background: rgba(0, 255, 51, 0.5);
-            animation: scan 2s linear infinite;
-        }
+
         .photo-frame img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(100%) contrast(120%) brightness(90%);
+            filter: grayscale(100%) contrast(150%) brightness(80%);
         }
-        .info-details {
+
+        .data-results {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 2px;
         }
-        .info-row {
+
+        .data-row {
             display: flex;
-            border-bottom: 1px dotted rgba(0, 255, 51, 0.3);
-            padding-bottom: 5px;
         }
-        .info-label {
-            width: 140px;
+
+        .data-label {
+            width: 80px;
             font-weight: bold;
-            color: #00cc25;
+            color: #0f3;
         }
-        .info-value {
+
+        .data-value {
             flex-grow: 1;
+            color: #0f3;
         }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+        /* --- Jendela Tambahan (Peta, Terminal, dll) --- */
+        .map-window {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
         }
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
+
+        .terminal-window {
+            grid-column: 1 / 3;
+            grid-row: 2 / 3;
         }
+
+        /* Gaya Khusus untuk Jendela Tambahan */
+        #terminal-output {
+            color: #888;
+            font-size: 10px;
+            height: 100%;
+            overflow: auto; /* Scrollbar untuk terminal */
+        }
+
+        /* Tambahan Visual: Mata Uang Kripto */
+        .crypto-widget {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid #0f3;
+            padding: 4px;
+            margin-top: 10px;
+            background: rgba(0, 10, 0, 0.9);
+        }
+
+        .crypto-label { font-size: 10px; color: #888; }
+        .crypto-value { font-size: 16px; font-weight: bold; }
+
+        /* Animasi */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-<div class="terminal-container">
-    <div class="header">
-        === MAIN DATABASE ACCESS - SYSTEM OVERRIDE ===
-    </div>
-
-    <div class="search-box">
-        <label for="search-input">></label>
-        <input type="text" id="search-input" placeholder="MASUKKAN NAMA TARGET (contoh: budi atau siti)..." autocomplete="off">
-        <button onclick="searchDatabase()">BYPASS</button>
-    </div>
-
-    <div id="status-log">SIAP MENERIMA PERINTAH...</div>
-
-    <div class="profile-card" id="profile-result">
-        <div class="photo-frame">
-            <img id="target-photo" src="" alt="Target Photo">
+<div class="terminal-grid">
+    <div class="window main-search-window">
+        <div class="window-header">個人資料庫 個人資料庫 (PERSONAL DATABASE)</div>
+        <div class="window-content">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="MASUKKAN NAMA (contoh: 李國樑 atau siti)..." autocomplete="off">
+                <button onclick="searchDatabase()">PENCARIAN</button>
+            </div>
+            
+            <div id="status-log" style="color: #888; font-size: 11px; min-height: 20px;">READY FOR COMMAND...</div>
+            
+            <div class="profile-card" id="profile-result">
+                <div class="photo-frame">
+                    <img id="target-photo" src="" alt="Target Photo">
+                </div>
+                <div class="data-results">
+                    <div class="data-row"><span class="data-label">NAMA:</span> <span class="data-value" id="res-name">-</span></div>
+                    <div class="data-row"><span class="data-label">PINYIN:</span> <span class="data-value" id="res-pinyin">-</span></div>
+                    <div class="data-row"><span class="data-label">DOB:</span> <span class="data-value" id="res-dob">-</span></div>
+                    <div class="data-row"><span class="data-label">ALAMAT:</span> <span class="data-value" id="res-location">-</span></div>
+                    <div class="data-row"><span class="data-label">STATUS:</span> <span class="data-value" id="res-status" style="color: red;">-</span></div>
+                </div>
+            </div>
         </div>
-        <div class="info-details">
-            <div class="info-row"><span class="info-label">NAMA:</span> <span class="info-value" id="res-name">-</span></div>
-            <div class="info-row"><span class="info-label">STATUS:</span> <span class="info-value" id="res-status" style="color: red;">-</span></div>
-            <div class="info-row"><span class="info-label">ALAMAT:</span> <span class="info-value" id="res-location">-</span></div>
-            <div class="info-row"><span class="info-label">IP ADDRESS:</span> <span class="info-value" id="res-ip">-</span></div>
-            <div class="info-row"><span class="info-label">KEAHLIAN:</span> <span class="info-value" id="res-skill">-</span></div>
-            <div class="info-row"><span class="info-label">CATATAN:</span> <span class="info-value" id="res-note">-</span></div>
+    </div>
+
+    <div class="window map-window">
+        <div class="window-header">國際網頁連線 (INTERNATIONAL WEB CON.)</div>
+        <div class="window-content">
+            <div style="font-size: 10px; border: 1px dashed #0f3; height: 100%; display: flex; align-items: center; justify-content: center; position: relative;">
+                <span>[ MAP_NETWORK_TRACING ]</span>
+                <span style="position: absolute; color: lime;">* SHENZHEN_H6</span>
+                <span style="position: absolute; top: 10px; right: 10px;">* LA_X3</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="window terminal-window">
+        <div class="window-header">主伺服器 連線紀錄 (SERVER CONN. LOG)</div>
+        <div class="window-content">
+            <div id="terminal-output">
+                </div>
+            <div class="crypto-widget">
+                <div>
+                    <span class="crypto-label">BTC balance</span><br>
+                    <span class="crypto-value">12.4578</span> <span class="crypto-label">B</span>
+                </div>
+                <div style="font-size: 10px; border-left: 1px solid #0f3; padding-left: 10px;">
+                    Mining Rate: 337.54 MHz/s<br>
+                    Diff: 45.99 G<br>
+                    Status: <span style="color: lime;">Active</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Database lokal. Kamu bisa ganti path foto ke "assets/nama_file.jpg"
+    // BASIS DATA LOKAL (Ganti atau tambah data di sini)
+    // Untuk foto, kamu bisa pakai URL gambar lain
     const database = [
         {
-            nama: "budi",
-            namaLengkap: "Budi Setyawan",
+            nama: "李國樑",
+            pinyin: "Li Guoliang",
+            dob: "1983/03/16",
             status: "WANTED / AWOL",
-            lokasi: "Jakarta, Indonesia",
-            ip: "192.168.1.105",
-            keahlian: "Cyber Security & Social Engineering",
-            catatan: "Terlihat terakhir di warnet subuh-subuh sambil minum kopi hitam.",
-            foto: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400" 
+            lokasi: "Shenzhen, China / Sector 7G",
+            foto: "https://images.unsplash.com/photo-1549740429-121580232c76?w=300" // Gunakan URL foto lain jika mau
         },
         {
             nama: "siti",
-            namaLengkap: "Siti Rahmawati",
+            pinyin: "Siti Rahmawati",
+            dob: "1995/10/22",
             status: "ACTIVE AGENT",
-            lokasi: "Bandung, Indonesia",
-            ip: "10.0.24.11",
-            keahlian: "Database Penetration & Cryptography",
-            catatan: "Sering meretas wifi tetangga untuk mengunduh modul kuliah.",
-            foto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400"
+            lokasi: "Bandung, Indonesia / Sector C5",
+            foto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300"
         }
     ];
 
+    // Fungsi Pencarian Data
     function searchDatabase() {
         const input = document.getElementById('search-input').value.toLowerCase().trim();
         const log = document.getElementById('status-log');
@@ -206,36 +268,73 @@
             return;
         }
 
-        log.innerHTML = "MENGHUBUNGKAN KE SERVER...<br>BYPASSING FIREWALL...<br>MENCARI DATA: " + input.toUpperCase();
+        // Efek loading ala hacker
+        log.innerHTML = "CONNECTING... BYPASSING FIREWALL... SEARCHING... " + input.toUpperCase();
         card.style.display = 'none';
 
+        // Jeda waktu seolah-olah sedang "meretas/mencari"
         setTimeout(() => {
-            const hasil = database.find(target => target.nama.toLowerCase() === input || target.namaLengkap.toLowerCase().includes(input));
+            const hasil = database.find(target => target.nama.toLowerCase() === input || target.pinyin.toLowerCase().includes(input));
 
             if (hasil) {
-                log.innerHTML = "<span style='color: #00ff33;'>AKSES DIIZINKAN. DATA DITEMUKAN.</span>";
+                log.innerHTML = "<span style='color: #0f3;'>ACCESS GRANTED. DATA FOUND.</span>";
                 
-                document.getElementById('res-name').innerText = hasil.namaLengkap;
-                document.getElementById('res-status').innerText = hasil.status;
+                // Isi data ke HTML
+                document.getElementById('res-name').innerText = hasil.nama;
+                document.getElementById('res-pinyin').innerText = hasil.pinyin;
+                document.getElementById('res-dob').innerText = hasil.dob;
                 document.getElementById('res-location').innerText = hasil.lokasi;
-                document.getElementById('res-ip').innerText = hasil.ip;
-                document.getElementById('res-skill').innerText = hasil.keahlian;
-                document.getElementById('res-note').innerText = hasil.catatan;
+                document.getElementById('res-status').innerText = hasil.status;
                 document.getElementById('target-photo').src = hasil.foto;
 
+                // Tampilkan kartu profil
                 card.style.display = 'grid';
             } else {
-                log.innerHTML = "<span style='color: red;'>AKSES DITOLAK: DATA TIDAK DITEMUKAN DALAM ARSIP.</span>";
+                log.innerHTML = "<span style='color: red;'>ACCESS DENIED: DATA NOT FOUND.</span>";
                 card.style.display = 'none';
             }
         }, 1500);
     }
 
+    // Mengaktifkan pencarian dengan tombol 'Enter'
     document.getElementById('search-input').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             searchDatabase();
         }
     });
+
+    // --- Efek Terminal Acak (Background) ---
+    // Mengisi Jendela Terminal dengan teks acak agar terlihat sibuk
+    function updateTerminalLog() {
+        const terminalOutput = document.getElementById('terminal-output');
+        const randomTexts = [
+            "> [conn] Connection to 192.168.1.105 established...",
+            "> [byp] Firewal bypass sequence 78%...",
+            "> [db_] Initalizing database scan...",
+            "> [net] Tracking data packet Shenzhen_H6...",
+            "> [sys] Core override active...",
+            "> [cry] Decrypting Li_Guoliang profile...",
+            "> [min] Bitcoin block hash generated...",
+            "> [err] Connection loss to Sector 7G...",
+            "> [sec] Intrustion detection bypass success..."
+        ];
+        
+        const randomIdx = Math.floor(Math.random() * randomTexts.length);
+        const newLine = document.createElement('div');
+        newLine.innerText = randomTexts[randomIdx];
+        
+        terminalOutput.appendChild(newLine);
+        terminalOutput.scrollTop = terminalOutput.scrollHeight; // Auto-scroll ke bawah
+        
+        // Jaga agar terminal tidak terlalu penuh
+        while (terminalOutput.childElementCount > 10) {
+            terminalOutput.removeChild(terminalOutput.firstChild);
+        }
+    }
+
+    // Jalankan pembaruan terminal setiap detik
+    setInterval(updateTerminalLog, 1200);
+
 </script>
 </body>
 </html>
